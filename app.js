@@ -2,7 +2,6 @@ const hamburger = document.querySelector(".hamburger");
 const navbar = document.querySelector(".nav-bar");
 const links=document.querySelector(".nav-bar .login");
 const play=document.getElementById("play-icon");
-const start=document.getElementById("start");
 const next=document.getElementById("next-icon");
 const prev = document.getElementById("prev-icon");
 const progressContainer = document.getElementById("progress-container");
@@ -20,9 +19,7 @@ const random = document.getElementById("shuffle");
 
 let isPlaying =false;
 let counter=0;
-audio.loop=false;
-let counting = 0;
-
+let counting=0;
 
 //hamburger
 hamburger.addEventListener("click", () => {
@@ -50,6 +47,21 @@ const songs =[
         artist:'Weekend',
         title:'Star Boy',
     },
+    {
+        name:'Childish',
+        artist:'Childish Gambino',
+        title:'This is America',
+    },
+    {
+        name:'BEE',
+        artist:'Billie Eilish',
+        title:'Everything i wanted',
+    },
+    {
+        name:'jl',
+        artist:'Solomon',
+        title:  'All of me', 
+    },
 ];
 
 function loadSong(songs)
@@ -59,7 +71,7 @@ function loadSong(songs)
     audio.src= `music/${songs.name}.mp3`;
     cover.src = `images/${songs.name}.jpg`;
 };
-songIndex=0;
+var songIndex=0;
 
 loadSong(songs[songIndex]);
 
@@ -233,10 +245,10 @@ volume.addEventListener("click", () => {
 //light and drak theme
 function Modes()
 {
-    if( document.getElementById("player").style.color==="white")
+    if( document.getElementById("player").style.background!=="white")
     {
         document.getElementById("player").style.background="white";
-        document.getElementById("player").style.color="rgba(34, 34, 34, 0.979)";
+        document.getElementById("player").style.color="rgb(68, 136, 0)";
         artist.style.color="rgba(34, 34, 34, 0.979)";
         title.style.color="rgba(34, 34, 34, 0.979)";
         progressContainer.style.background="rgba(34, 34, 34, 0.979)";
@@ -246,7 +258,7 @@ function Modes()
     else
     {
         document.getElementById("player").style.background="rgba(34, 34, 34, 0.979)";
-        document.getElementById("player").style.color="white";
+        document.getElementById("player").style.color="rgb(68, 136, 0)";
         artist.style.color="white";
         title.style.color="white";
         progressContainer.style.background="rgb(65, 64, 64)";
@@ -259,21 +271,45 @@ repeat.addEventListener("click", () => {
     counter++;
     if(counter%2==1)
     {
-        repeat.style.color="grey";
         audio.loop = true;
+        repeat.style.transform= "rotate(360deg)";
+        repeat.style.fontSize = "20px"
+        repeat.style.boxShadow = " 0 0 2px green";
+        repeat.style.transition= "all 1s"
        
     }
     else
     {
         audio.loop = false;
-        repeat.style.color="white"
+        repeat.style.transform= "none";
+        repeat.style.fontSize = "16px";
+        repeat.style.boxShadow = " none";
+        repeat.style.transition= "all 1s";
 
     }
 });
 
-function shuffle(songs)
+function shuffle()
 {
-    songs.sort(() => Math.random() - 0.5);
+    audio.addEventListener("ended",()=>{
+        var newsong= Math.floor((Math.random()*10)+1);
+        loadSong(songs[newsong]);
+        playMusic();
+    })
+}
+
+function resetsong()
+{
+    audio.addEventListener("ended",()=>{
+        songIndex=0;
+        loadSong(songs[songIndex]);
+        playMusic();
+        audio.addEventListener("ended",()=>{
+            loadSong(songs[songIndex]);
+            playMusic();
+            nextSong();
+        })
+    })
 }
 
 //next,prev define
@@ -292,18 +328,51 @@ audio.addEventListener("ended", nextSong);
 //light and dark 
 mode.addEventListener("click" , Modes);
 
+
+function search()
+{
+    let filter = document.getElementById("myInput").value.toUpperCase();
+    let ul=document.getElementById("Myul");
+    let li = ul.getElementsByTagName("li");
+
+    for(i=0;i<li.length;i++)
+    {
+        let a =li[i].getElementsByTagName("a")[0];
+        let textVaule= a.textContent || a.innerHTML;
+
+        if(textVaule.toUpperCase().indexOf(filter)> -1)
+        {
+            li[i].style.display = '';
+        }
+        else
+        {
+            li[i].style.display="none";
+        }
+    }
+}
+
+
+
+
+
 random.addEventListener("click" , () =>{
     counting++;
     console.log(counting);
     if(counting%2==1)
     {
-        random.style.color="grey";
-        shuffle(songs);
+        random.style.transform= "rotate(180deg)";
+        random.style.fontSize = "20px";
+        random.style.boxShadow = " 0 0 2px green";
+        random.style.transition= "all 1s";
+        shuffle();
     }
     else
     {
-        random.style.color="white";
+        random.style.transform= "none";
+        random.style.fontSize = "16px"
+        random.style.transition= "all 1s";
+        random.style.boxShadow = " none";
+        resetsong();
     }
 });
-
 
